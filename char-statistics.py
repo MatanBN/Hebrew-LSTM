@@ -2,14 +2,14 @@ import codecs
 import os
 
 test_file_chars_count = 100000
-input_folder = "brenner"
+input_folder = "Input"
 output_file_train = "brenner-train.txt"
 output_file_test = "brenner-test.txt"
 
 chars = {}
 chars_count = 0
 my_text = ""
-usable_chars = [' ', 'ו', 'י', 'ה', 'מ', 'ל', 'א', 'ר', 'ב', 'נ', 'ת', 'ש', 'ע', 'כ', ',', 'ד', '.', 'ח', 'פ', 'ק', '-', 'צ', 'ג', 'ס', 'ז', '"', 'ט', '?', '!', ':', '\'']
+usable_chars = [' ', 'ו', 'י', 'ה', 'מ', 'ל', 'א', 'ר', 'ב', 'נ', 'ת', 'ש', 'ע', 'כ', ',', 'ד', '.', 'ח', 'פ', 'ק', '-', 'צ', 'ג', 'ס', 'ז', '"', 'ט', '?', '!', ':', '\'', '1','2','3','4','5','6','7','8','9','0']
 
 for file in os.listdir(input_folder):
     if file.endswith(".txt"):
@@ -67,10 +67,10 @@ for char in sorted_chars:
 print(total)
 print(chars_count)
 
-write_file_handler = open(output_file_train, 'w')
+write_file_handler = open(output_file_train, 'w', encoding="utf-8")
 write_file_handler.write(my_text[0: chars_count - test_file_chars_count])
 write_file_handler.close()
 
-write_file_handler = open(output_file_test, 'w')
+write_file_handler = open(output_file_test, 'w', encoding="utf-8")
 write_file_handler.write(my_text[chars_count - test_file_chars_count])
 write_file_handler.close()
