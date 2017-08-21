@@ -34,7 +34,7 @@ def read_data(file_name, test_size):
 
     return (train_data, test_data)
 
-
+i = 5
 
 
 
