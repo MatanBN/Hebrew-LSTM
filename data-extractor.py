@@ -14,12 +14,6 @@ def letters_to_matrix(letters):
         data.append(letter_to_vec(letter))
     return np.asarray(data)
 
-def separate_txt_data(text, begin, end):
-    separated_txt = ""
-    for i in range(begin, end):
-        separated_txt += text[i]
-    return separated_txt
-
 #Gets a txt file name and returns a tuple of np arrays of one shot np arrays according to the usable_chars mapping.
 def read_data(file_name, test_size):
     file = open(file_name, 'r', encoding='utf-8')
