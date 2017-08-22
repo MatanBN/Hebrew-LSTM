@@ -14,7 +14,7 @@ class Model:
         self.history = None
 
     def train_model(self, train_x, train_y):
-        self.history = self.model.fit(train_x, train_y, epochs=50, batch_size=1, verbose=1)
+        self.history = self.model.fit(train_x, train_y, epochs=50, batch_size=50, verbose=1)
 
     def plot_results(self):
         if self.history is not None:
