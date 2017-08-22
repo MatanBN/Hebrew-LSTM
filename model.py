@@ -3,18 +3,21 @@ from keras.layers import Dense
 from keras.layers import LSTM
 import matplotlib.pyplot as plt
 
-class Model:
 
-    def __init__(self, input_shape, y_shape):
+class Model:
+    def __init__(self, input_shape, y_shape, batch_size=1):
         # create and fit the model
         self.model = Sequential()
-        self.model.add(LSTM(32, input_shape=input_shape))
+        self.model.add(LSTM(16, batch_input_shape=(batch_size, input_shape[0], input_shape[1]), stateful=True))
         self.model.add(Dense(y_shape, activation='softmax'))
         self.model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
         self.history = None
+        self.batch_size = batch_size
 
     def train_model(self, train_x, train_y):
-        self.history = self.model.fit(train_x, train_y, epochs=50, batch_size=50, verbose=1)
+        for i in range(300):
+            self.model.fit(train_x, train_y, epochs=1, batch_size=self.batch_size, verbose=1, shuffle=False)
+            self.model.reset_states()
 
     def plot_results(self):
         if self.history is not None:
@@ -27,5 +30,3 @@ class Model:
             plt.show()
         else:
             print("No training were done yet")
-
-
