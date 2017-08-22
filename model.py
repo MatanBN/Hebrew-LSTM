@@ -15,9 +15,10 @@ class Model:
         self.batch_size = batch_size
 
     def train_model(self, train_x, train_y):
-        for i in range(300):
+        for i in range(50):
             self.model.fit(train_x, train_y, epochs=1, batch_size=self.batch_size, verbose=1, shuffle=False)
             self.model.reset_states()
+        self.model.save(filepath="weights.h5")
 
     def plot_results(self):
         if self.history is not None:

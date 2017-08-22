@@ -46,7 +46,7 @@ will be in the format of one shot np arrays according to the usable_chars mappin
 def read_data(file_name, test_size, sequence=1):
     file = open(file_name, 'r', encoding='utf-8')
     text = file.readline()
-    train_size = len(text) - test_size
+    train_size = len(text) - test_size - 17
 
     train_text = text[:train_size]
     test_text = text[train_size:]
