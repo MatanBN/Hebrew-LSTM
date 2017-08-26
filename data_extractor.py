@@ -1,4 +1,5 @@
 import numpy as np
+from keras.preprocessing.sequence import pad_sequences
 from keras.utils import np_utils
 
 usable_chars = [' ', 'ו', 'י', 'ה', 'מ', 'ל', 'א', 'ר', 'ב', 'נ', 'ת', 'ש', 'ע', 'כ', ',', 'ד', '.', 'ח', 'פ', 'ק',
@@ -14,14 +15,21 @@ def letters_to_numbers(letters):
     return np.asarray(data)
 
 
-def format_dataset(data_x, data_y, seq_length=1):
+def format_dataset(data_x, data_y, seq_length=1, max_len=1):
+    x = np.zeros((len(data_x), seq_length, len(usable_chars)))
+    for i in range(len(data_x)):
+        for j in range(len(data_x[i])):
+            x[i][j][data_x[i][j]] = 1.0
+    #x = np.array(x)
+    #x = pad_sequences(data_x, maxlen=max_len, dtype='float32')
     # reshape X to be [samples, time steps, features]
-    x = np.reshape(data_x, (len(data_x), seq_length, 1))
+    #x = np.reshape(x, (x.shape[0], max_len, 1))
     # normalize
-    x = x / float(len(usable_chars))
-
-    # one hot encode the output variable
-    y = np_utils.to_categorical(data_y)
+    #x = x / float(len(usable_chars))
+    y = np.zeros((len(data_x), seq_length, len(usable_chars)))
+    for i in range(len(data_y)):
+        for j in range(len(data_y[i])):
+            y[i][j][data_y[i][j]] = 1.0
 
     return x, y
 
@@ -29,10 +37,12 @@ def format_dataset(data_x, data_y, seq_length=1):
 # Create the dataset in the right format for lstm.
 def create_dataset(dataset, look_back=1):
     data_x, data_y = [], []
-    for i in range(len(dataset) - look_back - 1):
-        a = dataset[i:(i + look_back)]
+    dataset_len = int(len(dataset) / look_back)
+    for i in range(dataset_len):
+        a = dataset[i * look_back:(i + 1) * look_back]
+        b = dataset[i * look_back + 1:(i + 1) * look_back + 1]
         data_x.append(a)
-        data_y.append(dataset[i + look_back])
+        data_y.append(dataset[b])
     data_x, data_y = format_dataset(data_x, data_y, seq_length=look_back)
     return data_x, data_y
 
