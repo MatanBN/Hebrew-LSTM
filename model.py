@@ -14,7 +14,7 @@ class Model:
 
         self.model.add(TimeDistributed(Dense(y_shape)))
         self.model.add(Activation('softmax'))
-        self.model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
+        self.model.compile(loss="categorical_crossentropy", optimizer="rmsprop", metrics=['accuracy'])
         self.history = None
         self.batch_size = batch_size
 
