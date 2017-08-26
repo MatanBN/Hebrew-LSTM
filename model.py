@@ -14,12 +14,15 @@ class Model:
 
         self.model.add(TimeDistributed(Dense(y_shape)))
         self.model.add(Activation('softmax'))
+        self.model.compile(loss="categorical_crossentropy", optimizer="rmsprop", metrics=['accuracy'])
         self.history = None
         self.batch_size = batch_size
 
-    def train_model(self, train_x, train_y):
+    def train_model(self, train_x, train_y, val_x, val_y):
         for i in range(50):
-            self.model.fit(train_x, train_y, epochs=1, batch_size=self.batch_size, verbose=1, shuffle=False)
+            self.history = self.model.fit(train_x, train_y, epochs=1, batch_size=self.batch_size, verbose=1,
+                                          shuffle=False,
+                                          validation_data=(val_x, val_y))
         self.model.save(filepath="weights.h5")
 
     def plot_results(self):
