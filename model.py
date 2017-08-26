@@ -1,5 +1,6 @@
 from keras.models import Sequential
 from keras.layers import Dense, TimeDistributed, Activation
+from keras.layers import Dense, TimeDistributed, Activation, Dropout
 from keras.layers import LSTM
 import matplotlib.pyplot as plt
 
@@ -9,6 +10,7 @@ class Model:
         # create and fit the model
         self.model = Sequential()
         self.model.add(LSTM(700, input_shape=(None, y_shape), return_sequences=True))
+        self.model.add(Dropout(0.3, input_shape=(None, y_shape)))
         self.model.add(LSTM(700, return_sequences=True))
         self.model.add(LSTM(700, return_sequences=True))
 
