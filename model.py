@@ -43,7 +43,7 @@ class Model:
             predicted_char_index = np.argmax(prediction)
             actual_char_index = np.argmax(test_y[i])
             cross_entropy = ((cross_entropy * i) - np.log2(prediction[0][actual_char_index])) / (i + 1)
-            if (test_y[i][0][predicted_char_index] == 1):
+            if test_y[i][0][predicted_char_index] == 1:
                 correct_predictions_counter += 1
 
         prediction_accuracy = correct_predictions_counter / test_length
