@@ -11,7 +11,7 @@ class Model:
         # create and fit the model
         self.model = Sequential()
         self.model.add(
-            LSTM(y_shape, batch_input_shape=(batch_size, None, y_shape), return_sequences=True))
+            LSTM(y_shape, input_shape=(None, y_shape), return_sequences=True))
         self.model.add(Dropout(0.20))
 
         self.model.add(LSTM(512, return_sequences=True))
