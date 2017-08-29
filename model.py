@@ -58,9 +58,12 @@ class Model:
             print("Epoch Num: ", str(i + 1))
             self.history = self.model.fit(train_x, train_y, epochs=1, batch_size=self.batch_size, verbose=1,
                                           shuffle=False)
+            self.model.reset_states()
+
             pred_acc, cros_entrop = self.test_model(val_x, val_y)
             print("Validation Accuracy: ", pred_acc, " Validation Cross Entropy: ", cros_entrop)
             self.model.reset_states()
+
         self.model.save(filepath="weights.h5")
 
     def plot_results(self):
