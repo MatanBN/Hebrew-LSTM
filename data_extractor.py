@@ -1,8 +1,7 @@
 import numpy as np
 
-usable_chars = [' ', 'ו', 'י', 'ה', 'מ', 'ל', 'א', 'ר', 'ב', 'נ', 'ת', 'ש', 'ע', 'כ', ',', 'ד', '.', 'ח', 'פ', 'ק',
-                '-', 'צ', 'ג', 'ס', 'ז', '"', 'ט', '?', '!', ':', '\'', '1', '2', '3', '4', '5', '6', '7', '8', '9',
-                '0']
+usable_chars = [' ', 'ו', 'י', 'ה', 'מ', 'ל', 'א', 'ר', 'ב', 'נ', 'ת', 'ש', 'ע', 'כ', ',', 'ד', '.', 'ח', 'פ', 'ק', '-',
+                'צ', 'ג', 'ס', 'ז', '"', 'ט', '?', '!', ':', '\'', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
 
 
 # Converts a text file to numbers according to the usable_chars mapping
@@ -50,20 +49,17 @@ validation and test which will be in the format of one shot np arrays according 
 """
 
 
-def read_data(file_name, test_size, validation_size, sequence=1):
+def read_data(file_name, test_size, sequence=1):
     file = open(file_name, 'r', encoding='utf-8')
     text = file.readline()
-    train_size = len(text) - test_size - validation_size
+    train_size = len(text) - test_size
 
     train_text = text[:train_size]
-    val_text = text[train_size: train_size + validation_size]
-    test_text = text[train_size + validation_size:]
+    test_text = text[train_size:]
 
     train_x = letters_to_numbers(train_text)
-    val_x = letters_to_numbers(val_text)
     test_x = letters_to_numbers(test_text)
 
     (train_x, train_y) = create_dataset(train_x, sequence)
-    (val_x, val_y) = create_dataset(val_x, sequence)
     (test_x, test_y) = create_dataset(test_x, look_back=1)
-    return (train_x, train_y, val_x, val_y, test_x, test_y)
+    return (train_x, train_y, test_x, test_y)
