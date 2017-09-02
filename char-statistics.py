@@ -1,10 +1,10 @@
 import codecs
 import os
 
-test_file_chars_count = 100000
-input_folder = "Input"
-output_file_train = "brenner-train.txt"
-output_file_test = "brenner-test.txt"
+test_file_chars_count = 0
+input_folder = "tolstoy"
+output_file_train = "data-train.txt"
+output_file_test = "data-test.txt"
 
 chars = {}
 chars_count = 0
@@ -57,7 +57,7 @@ for file in os.listdir(input_folder):
                 my_text += char
 
 sorted_chars = sorted(chars, key=chars.get, reverse=True)
-total = 0;
+total = 0
 for char in sorted_chars:
     percent = int(chars[char])
     percent /= chars_count

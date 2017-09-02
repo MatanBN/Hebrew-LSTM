@@ -62,4 +62,4 @@ def read_data(file_name, test_size, sequence=1):
 
     (train_x, train_y) = create_dataset(train_x, sequence)
     (test_x, test_y) = create_dataset(test_x, look_back=1)
-    return (train_x, train_y, test_x, test_y)
+    return train_x, train_y, test_x, test_y
