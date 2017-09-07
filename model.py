@@ -8,14 +8,15 @@ from keras.utils import np_utils
 from data_handler import usable_chars
 from data_handler import add_suffixes
 
+
 # Model class contains the lstm model obejcts and the methods that the model is responsible for.
 class Model:
+    # Constructor initializes the model.
     def __init__(self, y_shape, batch_size=1):
         # create and fit the model
         self.model = Sequential()
         self.model.add(
-            LSTM(y_shape, input_shape=(None, y_shape), return_sequences=True, implementation=2))
-        self.model.add(LSTM(2048, return_sequences=True, implementation=2, dropout=0.5))
+            LSTM(128, input_shape=(None, y_shape), return_sequences=True, implementation=2))
         self.model.add(TimeDistributed(Dense(y_shape)))
         self.model.add(Activation('softmax'))
 
@@ -24,28 +25,31 @@ class Model:
         self.history = None
         self.batch_size = batch_size
 
+    # Tests the model according to the test set given.
     def test_model(self, test_x, test_y):
         cross_entropy = 0
         prediction_accuracy = 0
         test_length = len(test_x)
-        correct_predictions_counter = 0
         predictions = self.model.predict(test_x)
 
         for i in range(test_length):
             prediction = predictions[i]
-            predicted_char_index = np.argmax(prediction)
-            actual_char_index = np.argmax(test_y[i])
-            cross_entropy = ((cross_entropy * i) - np.log2(prediction[0][actual_char_index])) / (i + 1)
-            if test_y[i][0][predicted_char_index] == 1:
-                correct_predictions_counter += 1
+            for j in range(prediction.shape[0]):
+                predicted_char_index = np.argmax(prediction[j])
+                actual_char_index = np.argmax(test_y[i][j])
+                cross_entropy -= np.log2(prediction[j][actual_char_index])
+                if test_y[i][j][predicted_char_index] == 1:
+                    prediction_accuracy += 1
 
-        prediction_accuracy = correct_predictions_counter / test_length
+        prediction_accuracy = prediction_accuracy / test_length
 
         return prediction_accuracy, cross_entropy
 
+    # Saves the current weights to the file path given.
     def save_weights(self, file_path):
         self.model.save_weights(filepath=file_path, overwrite=True)
 
+    # Loads the weights from the file path given.
     def load_weights(self, file_path):
         self.model.load_weights(filepath=file_path)
 
@@ -56,10 +60,6 @@ class Model:
             self.history = self.model.fit(train_x, train_y, epochs=save_weights_after, batch_size=self.batch_size,
                                           verbose=1, shuffle=False, validation_data=(val_x, val_y))
             self.save_weights("weights_epoch_num" + str(i + 10) + ".h5")
-            # acc, cross = self.test_model(val_x, val_y)
-            # print("Accuracy:", acc, "Cross Entropy:", cross)
-            generated_text = self.generate_text(200)
-            print(generated_text)
 
     # Plots the result of the training.
     def plot_results(self):

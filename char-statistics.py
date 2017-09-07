@@ -10,7 +10,7 @@ chars = {}
 chars_count = 0
 my_text = ""
 usable_chars = [' ', 'ו', 'י', 'ה', 'מ', 'ל', 'א', 'ר', 'ב', 'נ', 'ת', 'ש', 'ע', 'כ', ',', 'ד', '.', 'ח', 'פ', 'ק', '-',
-                'צ', 'ג', 'ס', 'ז', '"', 'ט', '?', '!', ':', '\'', '\n']
+                'צ', 'ג', 'ס', 'ז', '"', 'ט', '?', '!', ':', '\'', '\n','ן', 'ם', 'ף', 'ך', 'ץ']
 
 for file in os.listdir(input_folder):
     if file.endswith(".txt"):
@@ -33,7 +33,6 @@ for file in os.listdir(input_folder):
                 char = "," if char in (",", ";") else char
                 char = "'" if char in ("'", "'", "′") else char
                 char = '-' if char in ('־', '-', '–', '─', '—', '­', '־', '‑') else char
-
                 # Skip non Hebrew chars
                 if char not in usable_chars:
                     continue

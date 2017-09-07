@@ -5,7 +5,7 @@ usable_chars = [' ', 'ו', 'י', 'ה', 'מ', 'ל', 'א', 'ר', 'ב', 'נ', 'ת',
 
 punctuations = [' ', ',', '.', '-', '"', '?', '!', ':', '\'', '\n']
 
-letter_to_finals = {u'מ': u'ם', u'נ': u'ן', u'פ': u'ף', u'צ': u'ץ'}
+letter_to_finals = {u'מ': u'ם', u'נ': u'ן', u'פ': u'ף', u'צ': u'ץ', u'כ': u'ך'}
 
 # Converts a text file to numbers according to the usable_chars mapping
 def letters_to_numbers(letters):
@@ -40,6 +40,8 @@ def remove_suffixes(text):
     text = text.replace(u'ם', 'מ')
     text = text.replace(u'ץ', 'צ')
     text = text.replace(u'ן', 'נ')
+    text = text.replace(u'ך', 'כ')
+
     return text
 
 # Create the dataset in the right format for lstm.
