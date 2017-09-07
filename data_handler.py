@@ -1,8 +1,11 @@
 import numpy as np
 
 usable_chars = [' ', 'ו', 'י', 'ה', 'מ', 'ל', 'א', 'ר', 'ב', 'נ', 'ת', 'ש', 'ע', 'כ', ',', 'ד', '.', 'ח', 'פ', 'ק', '-',
-                'צ', 'ג', 'ס', 'ז', '"', 'ט', '?', '!', ':', '\'', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
+                'צ', 'ג', 'ס', 'ז', '"', 'ט', '?', '!', ':', '\'', '\n']
 
+punctuations = [' ', ',', '.', '-', '"', '?', '!', ':', '\'', '\n']
+
+letter_to_finals = {u'מ': u'ם', u'נ': u'ן', u'פ': u'ף', u'צ': u'ץ'}
 
 # Converts a text file to numbers according to the usable_chars mapping
 def letters_to_numbers(letters):
@@ -12,6 +15,7 @@ def letters_to_numbers(letters):
     return np.asarray(data)
 
 
+# Formats the data set to the one hot array for the input and output
 def format_dataset(data_x, data_y, seq_length=1, max_len=1):
     x = np.zeros((len(data_x), seq_length, len(usable_chars)))
     for i in range(len(data_x)):
@@ -30,6 +34,14 @@ def format_dataset(data_x, data_y, seq_length=1, max_len=1):
     return x, y
 
 
+# Removes the suffixes chars in the text
+def remove_suffixes(text):
+    text = text.replace(u'ף', 'פ')
+    text = text.replace(u'ם', 'מ')
+    text = text.replace(u'ץ', 'צ')
+    text = text.replace(u'ן', 'נ')
+    return text
+
 # Create the dataset in the right format for lstm.
 def create_dataset(dataset, look_back=1):
     data_x, data_y = [], []
@@ -38,10 +50,25 @@ def create_dataset(dataset, look_back=1):
         a = dataset[i * look_back:(i + 1) * look_back]
         b = dataset[i * look_back + 1:(i + 1) * look_back + 1]
         data_x.append(a)
-        data_y.append(dataset[b])
+        data_y.append(b)
     data_x, data_y = format_dataset(data_x, data_y, seq_length=look_back)
     return data_x, data_y
 
+    # Add the finals to the text.
+def add_suffixes(self, string):
+    new_string = []
+    string_length = len(string) - 1
+    for i in range(string_length):
+        if string[i] in letter_to_finals.keys() and string[i + 1] in punctuations:
+            new_string.append(letter_to_finals[string[i]])
+        else:
+            new_string.append(string[i])
+    if string[i] in letter_to_finals.keys():
+        new_string.append(letter_to_finals[string[i]])
+    else:
+        new_string.append(string[i])
+
+    return ('').join(new_string)
 
 """
 Get a txt file name and returns a tuple of np arrays of x_data for train, validation and test and y_data for train,
@@ -49,17 +76,13 @@ validation and test which will be in the format of one shot np arrays according 
 """
 
 
-def read_data(file_name, test_size, sequence=1):
+def read_data(file_name, sequence=1):
     file = open(file_name, 'r', encoding='utf-8')
-    text = file.readline()
-    train_size = len(text) - test_size
+    text = file.read()
 
-    train_text = text[:train_size]
-    test_text = text[train_size:]
+    text = remove_suffixes(text)
 
-    train_x = letters_to_numbers(train_text)
-    test_x = letters_to_numbers(test_text)
+    text = letters_to_numbers(text)
 
-    (train_x, train_y) = create_dataset(train_x, sequence)
-    (test_x, test_y) = create_dataset(test_x, look_back=1)
-    return train_x, train_y, test_x, test_y
+    (x, y) = create_dataset(text, sequence)
+    return (x, y)
