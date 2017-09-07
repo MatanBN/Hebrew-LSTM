@@ -57,7 +57,7 @@ def create_dataset(dataset, look_back=1):
     return data_x, data_y
 
     # Add the finals to the text.
-def add_suffixes(self, string):
+def add_suffixes(string):
     new_string = []
     string_length = len(string) - 1
     for i in range(string_length):

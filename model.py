@@ -8,6 +8,21 @@ from keras.utils import np_utils
 from data_handler import usable_chars
 from data_handler import add_suffixes
 
+from keras.callbacks import Callback
+
+
+class WeightsSaver(Callback):
+    def __init__(self, model, N):
+        self.model = model
+        self.N = N
+        self.batch = 0
+
+    def on_epoch_end(self, epoch, logs={}):
+        if epoch % self.N == 0:
+            name = 'weights_epoch_num' + str(epoch) + '.h5'
+            self.model.save_weights(name)
+        self.batch += 1
+
 
 # Model class contains the lstm model obejcts and the methods that the model is responsible for.
 class Model:
@@ -42,6 +57,7 @@ class Model:
                     prediction_accuracy += 1
 
         prediction_accuracy = prediction_accuracy / test_length
+        cross_entropy /= test_length
 
         return prediction_accuracy, cross_entropy
 
@@ -55,11 +71,9 @@ class Model:
 
     # Trains the model with the train_x and train_y data, the number of epochs is determined according to epochs variable, and the
     def train_model(self, train_x, train_y, val_x, val_y, epochs=1, save_weights_after=10):
-        for i in range(0, epochs, save_weights_after):
-            print("Epoch Num:", str(i))
-            self.history = self.model.fit(train_x, train_y, epochs=save_weights_after, batch_size=self.batch_size,
-                                          verbose=1, shuffle=False, validation_data=(val_x, val_y))
-            self.save_weights("weights_epoch_num" + str(i + 10) + ".h5")
+        self.history = self.model.fit(train_x, train_y, epochs=epochs, batch_size=self.batch_size,
+                                      verbose=1, shuffle=False, validation_data=(val_x, val_y),
+                                      callbacks=[WeightsSaver(self.model, save_weights_after)])
 
     # Plots the result of the training.
     def plot_results(self):
