@@ -33,7 +33,8 @@ for file in os.listdir(input_folder):
                 char = "," if char in (",", ";") else char
                 char = "'" if char in ("'", "'", "′") else char
                 char = '-' if char in ('־', '-', '–', '─', '—', '­', '־', '‑') else char
-                # Skip non Hebrew chars
+
+                # Skip non usable chars
                 if char not in usable_chars:
                     continue
 

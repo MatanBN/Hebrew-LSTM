@@ -18,7 +18,7 @@ class WeightsSaver(Callback):
         self.batch = 0
 
     def on_epoch_end(self, epoch, logs={}):
-        if epoch % self.N == 0:
+        if epoch % self.N == 0 and epoch != 0:
             name = 'weights_epoch_num' + str(epoch) + '.h5'
             self.model.save_weights(name)
         self.batch += 1
@@ -31,7 +31,7 @@ class Model:
         # create and fit the model
         self.model = Sequential()
         self.model.add(
-            LSTM(128, input_shape=(None, y_shape), return_sequences=True, implementation=2))
+            LSTM(512, input_shape=(None, y_shape), return_sequences=True, implementation=2))
         self.model.add(TimeDistributed(Dense(y_shape)))
         self.model.add(Activation('softmax'))
 
@@ -55,9 +55,9 @@ class Model:
                 cross_entropy -= np.log2(prediction[j][actual_char_index])
                 if test_y[i][j][predicted_char_index] == 1:
                     prediction_accuracy += 1
-
-        prediction_accuracy = prediction_accuracy / test_length
-        cross_entropy /= test_length
+        number_of_examples = test_length * prediction.shape[0]
+        prediction_accuracy = prediction_accuracy / number_of_examples
+        cross_entropy /= number_of_examples
 
         return prediction_accuracy, cross_entropy
 
@@ -70,19 +70,21 @@ class Model:
         self.model.load_weights(filepath=file_path)
 
     # Trains the model with the train_x and train_y data, the number of epochs is determined according to epochs variable, and the
-    def train_model(self, train_x, train_y, val_x, val_y, epochs=1, save_weights_after=10):
+    def train_model(self, train_x, train_y, val_x, val_y, epochs=1, callbacks=[]):
+
         self.history = self.model.fit(train_x, train_y, epochs=epochs, batch_size=self.batch_size,
                                       verbose=1, shuffle=False, validation_data=(val_x, val_y),
-                                      callbacks=[WeightsSaver(self.model, save_weights_after)])
+                                      callbacks=callbacks)
 
     # Plots the result of the training.
     def plot_results(self):
         if self.history is not None:
             plt.plot(self.history.history['acc'])
-            plt.title('training accuracy')
-            plt.ylabel('accuracy')
-            plt.xlabel('epoch')
-            plt.legend(['train'], loc='upper left')
+            plt.plot(self.history.history['val_acc'])
+            plt.title('Model Accuracy')
+            plt.ylabel('Accuracy')
+            plt.xlabel('Epoch')
+            plt.legend(['train', 'validation'], loc='upper left')
             plt.show()
         else:
             print("No training were done yet")
@@ -106,7 +108,8 @@ class Model:
         for i in range(start_from, amount_of_chars):
             X[0, i, :][ix[-1]] = 1
             # print(usable_chars[ix[-1]], end="")
-            prediction = self.model.predict(X[:, :i + 1, :])[0][i]
+            start = max(0, i - 50)
+            prediction = self.model.predict(X[:, start:i + 1, :])[0][-1]
 
             ix = np.random.choice(len(usable_chars), 1, p=prediction)
 
